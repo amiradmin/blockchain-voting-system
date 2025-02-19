@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Contract</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+    <h1>Voting Contract</h1>
+    <div>
+        <h2>Total Votes: <span id="totalVotes">Loading...</span></h2>
+    </div>
+
+    <script>
+        // Connect to Ethereum
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        // Replace with your contract's address and ABI
+        const contractAddress = "0x3268002942961ef18ec0c268af4486ed865dcdca5eee78735f22efa3f16be7b0";
+        const abi = [
+            "function getTotalVotes() public view returns (uint256)"
+        ];
+
+        // Create contract instance
+        const contract = new ethers.Contract(contractAddress, abi, signer);
+
+        async function fetchTotalVotes() {
+            try {
+                // Fetch total votes from contract
+                const totalVotes = await contract.getTotalVotes();
+
+                // Update HTML with the total votes
+                document.getElementById("totalVotes").innerText = totalVotes.toString();
+            } catch (error) {
+                console.error("Error fetching total votes:", error);
+            }
+        }
+
+        // Call the function to fetch total votes
+        fetchTotalVotes();
+    </script>
+</body>
+</html>
