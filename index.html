@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>Decentralized Voting</title>
+    </head>
+    <body>
+        <h1>Vote for Your Favorite Candidate</h1>
+        <input type="text" id="candidate" placeholder="Enter candidate name">
+        <button onclick="vote()">Vote</button>
+        <div id="status"></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/ethers@5.0.0/dist/ethers.umd.min.js"></script>
+        <script>
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const contractAddress = "0x68aF4b31e5A16d2ba1543EBD98665AEFd5D29151";  // Replace with your contract address
+            let contract;
+
+            async function init() {
+                const [account] = await provider.listAccounts();
+                contract = new ethers.Contract(
+                    contractAddress,
+                    [
+                        "function vote(string memory candidate) public",
+                        "function getVotes(string memory candidate) public view returns (uint256)"
+                    ],
+                    provider.getSigner()
+                );
+            }
+
+            async function vote() {
+                const candidate = document.getElementById('candidate').value;
+                if (candidate) {
+                    try {
+                        const tx = await contract.vote(candidate);
+                        await tx.wait();
+                        document.getElementById('status').innerText = `Vote successful for ${candidate}!`;
+                    } catch (error) {
+                        document.getElementById('status').innerText = "Error: " + error.message;
+                    }
+                }
+            }
+
+            init();
+        </script>
+    </body>
+</html>
